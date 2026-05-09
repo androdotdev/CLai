@@ -1,0 +1,30 @@
+name: Build Extension
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: extension/package-lock.json
+
+      - run: npm ci
+        working-directory: extension
+
+      - run: npm run build
+        working-directory: extension
+
+      - run: zip -r clai-extension.zip dist/
+        working-directory: extension
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: extension/clai-extension.zip

@@ -1,4 +1,9 @@
-const API_BASE = "http://localhost:3000";
+const DEFAULT_API_BASE = "https://c-lai.vercel.app";
+let API_BASE = DEFAULT_API_BASE;
+
+chrome.storage.sync.get(["apiBase"]).then((r) => {
+  if (r.apiBase) API_BASE = r.apiBase;
+});
 
 interface GeneratePayload {
   jobTitle: string;
@@ -22,12 +27,22 @@ type GenerateResponse = SuccessResponse | ErrorResponse;
 
 chrome.runtime.onMessage.addListener(
   (
-    message: { type: string; payload: GeneratePayload },
+    message: any,
     _sender,
-    sendResponse: (response: GenerateResponse) => void
+    sendResponse: (response: any) => void
   ) => {
     if (message.type === "GENERATE_LETTER") {
       generateLetter(message.payload).then(sendResponse);
+      return true;
+    }
+    if (message.type === "GET_API_BASE") {
+      sendResponse({ apiBase: API_BASE });
+      return true;
+    }
+    if (message.type === "SET_API_BASE") {
+      API_BASE = message.apiBase;
+      chrome.storage.sync.set({ apiBase: message.apiBase });
+      sendResponse({ ok: true });
       return true;
     }
   }

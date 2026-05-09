@@ -29,7 +29,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Content script in `extension/src/content/index.ts`
 - Scrapers in `extension/src/content/scrapers/`
 - Popup UI in `extension/src/popup/App.tsx`
-- `API_BASE` in background hardcoded to `localhost:3000` — update for production
+- Options page at `extension/src/options/App.tsx` — accessible via right-click → Options
+- `API_BASE` defaults to `https://c-lai.vercel.app`, overridable via Options page
+- Options page tests connection, saves to `chrome.storage.sync`
 - Build: `npm run build` in `extension/`, outputs to `extension/dist/`
 - Load unpacked from `extension/dist/`
 

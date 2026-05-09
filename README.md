@@ -21,11 +21,27 @@ npm run dev             # → http://localhost:3000
 | `BETTER_AUTH_SECRET` | Auth secret (generate with `openssl rand -hex 32`) |
 | `BETTER_AUTH_URL` | `http://localhost:3000` (dev) or your Vercel URL |
 | `NEXT_PUBLIC_BETTER_AUTH_URL` | Same as above |
-| `ENCRYPTION_KEY` | Key for encrypting API keys at rest |
 
 ## Chrome Extension
 
-### Load in Chrome
+### Download & Install
+1. Go to the [Releases page](https://github.com/anomalyco/clai/releases)
+2. Download `clai-extension.zip` from the latest release
+3. Unzip it
+4. Go to `chrome://extensions`, enable **Developer mode**
+5. Click **Load unpacked** and select the unzipped folder
+
+### For normal users (zero config)
+The extension works out of the box pointing at the hosted service. Just install and use.
+
+### For self-hosters
+1. Install the extension
+2. Right-click the extension icon → **Options**
+3. Enter your custom server URL
+4. Click **Test Connection** to verify
+5. Click **Save**
+
+### Load in Chrome (development)
 1. `cd extension && npm install && npm run build`
 2. Go to `chrome://extensions`, enable Developer mode
 3. Click "Load unpacked", select `extension/dist/`
@@ -39,7 +55,7 @@ cd extension && npm run build && zip -r ../clai.zip dist/
 
 1. Push to GitHub
 2. Import repo in Vercel
-3. Set env vars (including `ENCRYPTION_KEY` and `BETTER_AUTH_SECRET`)
+3. Set env vars (including `BETTER_AUTH_SECRET`)
 4. Deploy
 
 For extension to work in production:

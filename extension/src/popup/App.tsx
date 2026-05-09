@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LoaderCircle, Copy, Check } from "lucide-react";
 import type { ScraperResult } from "../content/scrapers/types";
 
@@ -28,6 +28,13 @@ export default function App() {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [length, setLength] = useState<Length>("medium");
+  const [apiBase, setApiBase] = useState("https://c-lai.vercel.app");
+
+  useEffect(() => {
+    chrome.runtime.sendMessage({ type: "GET_API_BASE" }, (r) => {
+      if (r?.apiBase) setApiBase(r.apiBase);
+    });
+  }, []);
 
   const handleGenerate = async (selectedLength?: Length) => {
     const len = selectedLength || length;
@@ -43,10 +50,10 @@ export default function App() {
 
     let result: ScraperResult | null = null;
     try {
-      result = await chrome.tabs.sendMessage<ScraperResult | null>(
+      result = await chrome.tabs.sendMessage(
         tab.id,
         { type: "SCRAPE_JOB" }
-      );
+      ) as ScraperResult | null;
     } catch {
       setError("Error occur: check dashboard for more info");
       setStep("error");
@@ -62,10 +69,10 @@ export default function App() {
     setData(result);
     setStep("generating");
 
-    const response = await chrome.runtime.sendMessage<GenerateResponse>({
+    const response = await chrome.runtime.sendMessage({
       type: "GENERATE_LETTER",
       payload: { ...result, length: len },
-    });
+    }) as GenerateResponse | undefined;
 
     if (response?.error) {
       setError(response.error);
@@ -91,6 +98,10 @@ export default function App() {
       content: letter,
     });
     window.close();
+  };
+
+  const openSettings = () => {
+    chrome.tabs.create({ url: `${apiBase}/dashboard/settings` });
   };
 
   return (
@@ -238,7 +249,7 @@ export default function App() {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                chrome.tabs.create({ url: "http://localhost:3000/dashboard/settings" });
+                openSettings();
               }}
               style={{
                 padding: "8px 16px",
@@ -304,7 +315,7 @@ export default function App() {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            chrome.tabs.create({ url: "http://localhost:3000/dashboard/settings" });
+            openSettings();
           }}
           style={{ color: "#a1a1aa" }}
         >
