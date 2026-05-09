@@ -3,6 +3,9 @@ name: Build Extension
 on:
   release:
     types: [published]
+    
+permissions:
+  contents: write
 
 jobs:
   build:
