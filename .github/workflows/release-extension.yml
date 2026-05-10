@@ -1,9 +1,10 @@
 name: Build Extension
 
 on:
-  release:
-    types: [published]
-    
+  push:
+    tags:
+      - 'v*'
+
 permissions:
   contents: write
 
@@ -19,6 +20,15 @@ jobs:
           cache: npm
           cache-dependency-path: extension/package-lock.json
 
+      - name: Verify version matches tag
+        run: |
+          VERSION=$(node -p "require('./extension/public/manifest.json').version")
+          TAG=${GITHUB_REF#refs/tags/}
+          if [ "v$VERSION" != "$TAG" ]; then
+            echo "Tag $TAG does not match manifest version v$VERSION"
+            exit 1
+          fi
+
       - run: npm ci
         working-directory: extension
 
@@ -28,6 +38,15 @@ jobs:
       - run: cd dist && zip -r ../clai-extension.zip .
         working-directory: extension
 
+      - name: Pack CRX
+        run: |
+          echo "${{ secrets.EXTENSION_PRIVATE_KEY }}" > key.pem
+          npx crx pack extension/dist -o extension/clai-extension.crx --private-key key.pem
+          rm key.pem
+
       - uses: softprops/action-gh-release@v2
         with:
-          files: extension/clai-extension.zip
+          files: |
+            extension/clai-extension.zip
+            extension/clai-extension.crx
+          generate_release_notes: true
