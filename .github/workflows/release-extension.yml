@@ -25,7 +25,7 @@ jobs:
       - run: npm run build
         working-directory: extension
 
-      - run: zip -r clai-extension.zip dist/
+      - run: cd dist && zip -r ../clai-extension.zip .
         working-directory: extension
 
       - uses: softprops/action-gh-release@v2

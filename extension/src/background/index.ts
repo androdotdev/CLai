@@ -15,6 +15,8 @@ async function checkForUpdate() {
     const current = chrome.runtime.getManifest().version;
     if (latest && latest !== current) {
       await chrome.storage.local.set({ updateAvailable: latest });
+    } else if (latest) {
+      await chrome.storage.local.remove("updateAvailable");
     }
   } catch {}
 }
