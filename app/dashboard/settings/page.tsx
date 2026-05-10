@@ -93,6 +93,18 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const handleRemoveKey = async (provider: string) => {
+    const field = keyLabels[provider].field;
+    const res = await fetch("/api/profile", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [field]: null }),
+    });
+    const data = await res.json();
+    if (data.hasKeys) setHasKeys(data.hasKeys);
+    if (data.providerErrors) setProviderErrors(data.providerErrors);
+  };
+
   if (loading) return <div className="text-zinc-500">Loading...</div>;
 
   return (
@@ -115,9 +127,18 @@ export default function SettingsPage() {
             <label className="block text-sm font-medium mb-1">
               {keyLabels[k].label}
               {hasKeys[k] && !providerErrors[k] && (
-                <span className="ml-2 text-xs text-green-600 dark:text-green-400">
-                  Saved ✓
-                </span>
+                <>
+                  <span className="ml-2 text-xs text-green-600 dark:text-green-400">
+                    Saved ✓
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveKey(k)}
+                    className="ml-2 text-xs text-red-500 hover:text-red-700 underline"
+                  >
+                    Remove
+                  </button>
+                </>
               )}
               {providerErrors[k] && (
                 <span className="ml-2 text-xs text-red-500">

@@ -36,9 +36,14 @@ export default function App() {
     chrome.runtime.sendMessage({ type: "GET_API_BASE" }, (r) => {
       if (r?.apiBase) setApiBase(r.apiBase);
     });
-    chrome.runtime.sendMessage({ type: "CHECK_UPDATE" }, (r) => {
-      if (r?.updateAvailable) setUpdateAvailable(r.updateAvailable);
-    });
+    fetch("https://api.github.com/repos/androdotdev/CLai/releases/latest")
+      .then((r) => r.json())
+      .then((data) => {
+        const latest = (data.tag_name || "").replace(/^v/, "");
+        const current = chrome.runtime.getManifest().version;
+        if (latest && latest !== current) setUpdateAvailable(latest);
+      })
+      .catch(() => {});
   }, []);
 
   const handleGenerate = async (selectedLength?: Length) => {

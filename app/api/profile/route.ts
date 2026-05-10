@@ -45,19 +45,27 @@ export async function PUT(request: Request) {
   if (body.preferredProvider !== undefined) updateData.preferredProvider = body.preferredProvider;
   if (body.preferredModel !== undefined) updateData.preferredModel = body.preferredModel;
 
-  if (body.openaiKey) updateData.openaiKey = await encrypt(body.openaiKey);
-  if (body.anthropicKey) updateData.anthropicKey = await encrypt(body.anthropicKey);
-  if (body.geminiKey) updateData.geminiKey = await encrypt(body.geminiKey);
-  if (body.openrouterKey) updateData.openrouterKey = await encrypt(body.openrouterKey);
+  if (body.openaiKey !== undefined) {
+    updateData.openaiKey = body.openaiKey ? await encrypt(body.openaiKey) : null;
+  }
+  if (body.anthropicKey !== undefined) {
+    updateData.anthropicKey = body.anthropicKey ? await encrypt(body.anthropicKey) : null;
+  }
+  if (body.geminiKey !== undefined) {
+    updateData.geminiKey = body.geminiKey ? await encrypt(body.geminiKey) : null;
+  }
+  if (body.openrouterKey !== undefined) {
+    updateData.openrouterKey = body.openrouterKey ? await encrypt(body.openrouterKey) : null;
+  }
 
-  // Clear provider errors for providers that just got new keys
-  if (body.openaiKey || body.anthropicKey || body.geminiKey || body.openrouterKey) {
+  // Clear provider errors for providers that got new keys or had keys removed
+  if (body.openaiKey !== undefined || body.anthropicKey !== undefined || body.geminiKey !== undefined || body.openrouterKey !== undefined) {
     const record = await db.select().from(user).where(eq(user.id, session.user.id)).then((r) => r[0]);
     const errors = (record?.providerErrors as Record<string, string>) || {};
-    if (body.openaiKey) delete errors.openai;
-    if (body.anthropicKey) delete errors.anthropic;
-    if (body.geminiKey) delete errors.gemini;
-    if (body.openrouterKey) delete errors.openrouter;
+    if (body.openaiKey !== undefined) delete errors.openai;
+    if (body.anthropicKey !== undefined) delete errors.anthropic;
+    if (body.geminiKey !== undefined) delete errors.gemini;
+    if (body.openrouterKey !== undefined) delete errors.openrouter;
     updateData.providerErrors = errors;
   }
 
