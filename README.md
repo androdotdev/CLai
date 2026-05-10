@@ -25,7 +25,7 @@ npm run dev             # → http://localhost:3000
 ## Chrome Extension
 
 ### Download & Install
-1. Go to the [Releases page](https://github.com/anomalyco/clai/releases)
+1. Go to the [Releases page](https://github.com/androdotdev/CLai/releases)
 2. Download `clai-extension.zip` from the latest release
 3. Unzip it
 4. Go to `chrome://extensions`, enable **Developer mode**

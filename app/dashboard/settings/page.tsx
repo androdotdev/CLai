@@ -127,23 +127,23 @@ export default function SettingsPage() {
             <label className="block text-sm font-medium mb-1">
               {keyLabels[k].label}
               {hasKeys[k] && !providerErrors[k] && (
-                <>
-                  <span className="ml-2 text-xs text-green-600 dark:text-green-400">
-                    Saved ✓
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveKey(k)}
-                    className="ml-2 text-xs text-red-500 hover:text-red-700 underline"
-                  >
-                    Remove
-                  </button>
-                </>
+                <span className="ml-2 text-xs text-green-600 dark:text-green-400">
+                  Saved ✓
+                </span>
               )}
               {providerErrors[k] && (
                 <span className="ml-2 text-xs text-red-500">
                   Error: {providerErrors[k]}
                 </span>
+              )}
+              {hasKeys[k] && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveKey(k)}
+                  className="ml-2 text-xs text-red-500 hover:text-red-700 underline"
+                >
+                  Remove
+                </button>
               )}
             </label>
             <input
