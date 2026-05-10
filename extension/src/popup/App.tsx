@@ -30,10 +30,14 @@ export default function App() {
   const [saved, setSaved] = useState(false);
   const [length, setLength] = useState<Length>("medium");
   const [apiBase, setApiBase] = useState("https://c-lai.vercel.app");
+  const [updateAvailable, setUpdateAvailable] = useState<string | null>(null);
 
   useEffect(() => {
     chrome.runtime.sendMessage({ type: "GET_API_BASE" }, (r) => {
       if (r?.apiBase) setApiBase(r.apiBase);
+    });
+    chrome.runtime.sendMessage({ type: "CHECK_UPDATE" }, (r) => {
+      if (r?.updateAvailable) setUpdateAvailable(r.updateAvailable);
     });
   }, []);
 
@@ -120,6 +124,26 @@ export default function App() {
   return (
     <div style={{ padding: "16px" }}>
       <style>{styles}</style>
+      {updateAvailable && (
+        <a
+          href="https://github.com/androdotdev/CLai/releases"
+          target="_blank"
+          style={{
+            display: "block",
+            padding: "8px 12px",
+            borderRadius: "8px",
+            background: "#fef3c7",
+            color: "#92400e",
+            fontSize: "12px",
+            fontWeight: 500,
+            textDecoration: "none",
+            marginBottom: "12px",
+          }}
+        >
+          Update v{updateAvailable} available — download now
+        </a>
+      )}
+
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
         <span style={{ fontSize: "18px", fontWeight: 700 }}>Clai</span>
         {data && (

@@ -1,9 +1,26 @@
 const DEFAULT_API_BASE = "https://c-lai.vercel.app";
+const REPO = "androdotdev/CLai";
 let API_BASE = DEFAULT_API_BASE;
 
 chrome.storage.sync.get(["apiBase"]).then((r) => {
   if (r.apiBase) API_BASE = r.apiBase;
 });
+
+// Check for extension updates
+async function checkForUpdate() {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
+    const data = await res.json();
+    const latest = (data.tag_name || "").replace(/^v/, "");
+    const current = chrome.runtime.getManifest().version;
+    if (latest && latest !== current) {
+      await chrome.storage.local.set({ updateAvailable: latest });
+    }
+  } catch {}
+}
+
+checkForUpdate();
+setInterval(checkForUpdate, 6 * 60 * 60 * 1000);
 
 interface GeneratePayload {
   jobTitle: string;
@@ -55,6 +72,12 @@ chrome.runtime.onMessage.addListener(
     }
     if (message.type === "SAVE_LETTER") {
       saveLetter(message.payload).then(sendResponse);
+      return true;
+    }
+    if (message.type === "CHECK_UPDATE") {
+      chrome.storage.local.get(["updateAvailable"]).then((r) => {
+        sendResponse({ updateAvailable: r.updateAvailable || null });
+      });
       return true;
     }
   }
