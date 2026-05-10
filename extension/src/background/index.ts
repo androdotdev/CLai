@@ -15,6 +15,14 @@ interface GeneratePayload {
   length?: string;
 }
 
+interface SavePayload {
+  jobTitle: string;
+  company: string;
+  jobDescription?: string;
+  companyInfo?: string;
+  content: string;
+}
+
 interface SuccessResponse {
   content: string;
 }
@@ -45,8 +53,32 @@ chrome.runtime.onMessage.addListener(
       sendResponse({ ok: true });
       return true;
     }
+    if (message.type === "SAVE_LETTER") {
+      saveLetter(message.payload).then(sendResponse);
+      return true;
+    }
   }
 );
+
+async function saveLetter(payload: SavePayload): Promise<{ ok?: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/api/letters`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      return { error: err.error || "Save failed" };
+    }
+
+    return { ok: true };
+  } catch (err: any) {
+    return { error: err.message || "Network error" };
+  }
+}
 
 async function generateLetter(
   payload: GeneratePayload

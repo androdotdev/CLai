@@ -17,6 +17,33 @@ export async function GET() {
   return Response.json({ data: letters });
 }
 
+export async function POST(request: Request) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json();
+  const { jobTitle, company, jobDescription, companyInfo, content } = body;
+
+  if (!jobTitle || !company || !content) {
+    return Response.json({ error: "jobTitle, company, and content required" }, { status: 400 });
+  }
+
+  await db.insert(coverLetter).values({
+    id: crypto.randomUUID(),
+    userId: session.user.id,
+    jobTitle,
+    company,
+    jobUrl: null,
+    jobDescription,
+    companyInfo,
+    content,
+    provider: null,
+    model: null,
+  });
+
+  return Response.json({ ok: true });
+}
+
 export async function DELETE(request: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });

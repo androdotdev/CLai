@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LoaderCircle, Copy, Check } from "lucide-react";
+import { LoaderCircle, Copy, Check, Sparkles, SaveIcon } from "lucide-react";
 import type { ScraperResult } from "../content/scrapers/types";
 
 type Step = "idle" | "scraping" | "generating" | "done" | "error";
@@ -27,6 +27,7 @@ export default function App() {
   const [letter, setLetter] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [length, setLength] = useState<Length>("medium");
   const [apiBase, setApiBase] = useState("https://c-lai.vercel.app");
 
@@ -100,6 +101,18 @@ export default function App() {
     window.close();
   };
 
+  const handleSave = async () => {
+    const response = await chrome.runtime.sendMessage({
+      type: "SAVE_LETTER",
+      payload: { ...data, content: letter },
+    }) as { ok?: boolean; error?: string } | undefined;
+
+    if (response?.ok) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+  };
+
   const openSettings = () => {
     chrome.tabs.create({ url: `${apiBase}/dashboard/settings` });
   };
@@ -165,6 +178,26 @@ export default function App() {
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
               {copied ? "Copied!" : "Copy"}
+            </button>
+            <button
+              onClick={handleSave}
+              style={{
+                flex: 1,
+                padding: "8px 16px",
+                borderRadius: "8px",
+                border: "1px solid #e4e4e7",
+                background: "transparent",
+                color: "inherit",
+                cursor: "pointer",
+                fontWeight: 500,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+              }}
+            >
+              {saved ? <Check size={16} /> : <SaveIcon size={16} />}
+              {saved ? "Saved!" : "Save"}
             </button>
             <button
               onClick={handleAutoFill}
@@ -302,8 +335,13 @@ export default function App() {
               color: "#fff",
               cursor: "pointer",
               fontWeight: 500,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "6px",
             }}
           >
+            <Sparkles size={16} />
             Generate Cover Letter
           </button>
         </div>

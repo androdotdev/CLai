@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth-server";
 import { headers } from "next/headers";
 import { db } from "@/db";
-import { user, coverLetter } from "@/db/schema";
+import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { decrypt } from "@/lib/encryption";
 import { generateLetter, buildPrompt } from "@/lib/ai";
@@ -127,26 +127,13 @@ export async function POST(request: Request) {
       length,
     });
 
-    const { content, provider: usedProvider, model: usedModel } = await generateWithFallback(
+    const { content } = await generateWithFallback(
       userRecord,
       provider,
       model,
       systemPrompt,
       prompt
     );
-
-    await db.insert(coverLetter).values({
-      id: crypto.randomUUID(),
-      userId: session.user.id,
-      jobTitle,
-      company,
-      jobUrl: null,
-      jobDescription,
-      companyInfo,
-      content,
-      provider: usedProvider,
-      model: usedModel || null,
-    });
 
     return Response.json({ content });
   } catch (err: any) {

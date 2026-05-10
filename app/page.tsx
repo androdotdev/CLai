@@ -1,23 +1,55 @@
+"use client";
+
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const isLoggedIn = !!session;
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    router.push("/");
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
         <span className="text-xl font-bold">Clai</span>
         <nav className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="text-sm px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:opacity-90"
-          >
-            Get Started
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="text-sm px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:opacity-90"
+              >
+                Get Started
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="text-sm px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:opacity-90"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </nav>
       </header>
 
@@ -32,18 +64,29 @@ export default function LandingPage() {
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/signup"
-            className="px-8 py-3 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 font-medium hover:opacity-90"
-          >
-            Start writing — it&apos;s free
-          </Link>
-          <Link
-            href="/login"
-            className="px-8 py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900"
-          >
-            Sign in
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="px-8 py-3 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 font-medium hover:opacity-90"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/signup"
+                className="px-8 py-3 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 font-medium hover:opacity-90"
+              >
+                Start writing — it&apos;s free
+              </Link>
+              <Link
+                href="/login"
+                className="px-8 py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900"
+              >
+                Sign in
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="mt-24 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl text-left">

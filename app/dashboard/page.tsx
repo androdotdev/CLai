@@ -44,12 +44,16 @@ export default async function DashboardPage() {
           </p>
         </Link>
 
-        <div className="block p-4 rounded-lg border border-zinc-200 dark:border-zinc-800">
+        <a
+          href="https://github.com/androdotdev/CLai/releases"
+          target="_blank"
+          className="block p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600"
+        >
           <h2 className="font-semibold mb-1">Chrome Extension</h2>
           <p className="text-sm text-zinc-500">
             Install the extension to generate letters on job sites.
           </p>
-        </div>
+        </a>
       </div>
     </div>
   );
