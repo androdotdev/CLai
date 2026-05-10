@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Clai - AI Cover Letters",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Generate tailored cover letters on any job site using your own AI key.",
   "update_url": "https://c-lai.vercel.app/updates.xml",
   "permissions": ["storage", "activeTab"],
