@@ -22,7 +22,6 @@
 
 # misc
 .DS_Store
-*.pem
 
 # debug
 npm-debug.log*
@@ -46,4 +45,3 @@ next-env.d.ts
 # extension
 extension/dist/
 extension/node_modules/
-key.pem 

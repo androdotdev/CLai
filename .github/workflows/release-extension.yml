@@ -38,15 +38,7 @@ jobs:
       - run: cd dist && zip -r ../clai-extension.zip .
         working-directory: extension
 
-      - name: Pack CRX
-        run: |
-          echo "${{ secrets.EXTENSION_PRIVATE_KEY }}" > key.pem
-          npx crx pack extension/dist -o extension/clai-extension.crx --private-key key.pem
-          rm key.pem
-
       - uses: softprops/action-gh-release@v2
         with:
-          files: |
-            extension/clai-extension.zip
-            extension/clai-extension.crx
+          files: extension/clai-extension.zip
           generate_release_notes: true

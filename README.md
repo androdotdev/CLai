@@ -26,9 +26,10 @@ npm run dev             # → http://localhost:3000
 
 ### Download & Install
 1. Go to the [Releases page](https://github.com/androdotdev/CLai/releases)
-2. Download `clai-extension.crx` (recommended) or `clai-extension.zip`
-3. **Option A (CRX):** Drag `clai-extension.crx` onto `chrome://extensions`
-4. **Option B (Load unpacked):** Unzip → enable Developer mode → Load unpacked → select the folder
+2. Download `clai-extension.zip`
+3. Unzip it
+4. Go to `chrome://extensions`, enable **Developer mode**
+5. Click **Load unpacked** and select the unzipped folder
 
 ### For normal users (zero config)
 The extension works out of the box pointing at the hosted service. Just install and use.
@@ -45,11 +46,10 @@ The extension works out of the box pointing at the hosted service. Just install 
 2. Go to `chrome://extensions`, enable Developer mode
 3. Click "Load unpacked", select `extension/dist/`
 
-### Build for Store / CRX
+### Build for Store
 ```bash
 cd extension && npm run build
 cd dist && zip -r ../clai-extension.zip .
-cd .. && npx crx pack dist -o clai-extension.crx
 ```
 
 ## Deploy on Vercel
